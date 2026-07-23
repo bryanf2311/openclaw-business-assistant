@@ -76,13 +76,24 @@ if [ ! -f openclaw.json ]; then
     # shellcheck disable=SC1091
     source .env
     set +a
-    export HOME="${HOME}"
+
+    # Ollama Cloud needs an explicit provider entry — the bundled ollama
+    # plugin only auto-discovers a LOCAL daemon (see docker-entrypoint.sh
+    # for the same logic).
+    MODEL_PROVIDERS='{}'
+    if [[ "${PRIMARY_MODEL:-}" == ollama/* ]] && [ -n "${OLLAMA_API_KEY:-}" ]; then
+      OLLAMA_MODEL_ID="${PRIMARY_MODEL#ollama/}"
+      MODEL_PROVIDERS='{"ollama":{"baseUrl":"https://ollama.com","apiKey":"OLLAMA_API_KEY","api":"ollama","models":[{"id":"'"${OLLAMA_MODEL_ID}"'","name":"'"${OLLAMA_MODEL_ID}"'","reasoning":false,"input":["text","image"],"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0},"contextWindow":128000,"maxTokens":8192}]}}'
+      echo "   ✅ Registered Ollama Cloud provider for ${PRIMARY_MODEL}"
+    fi
+
     sed \
       -e "s#\${HOME}#${HOME}#g" \
       -e "s#\${PRIMARY_MODEL}#${PRIMARY_MODEL:-}#g" \
       -e "s#\${OPENCLAW_GATEWAY_TOKEN}#${OPENCLAW_GATEWAY_TOKEN:-}#g" \
       -e "s#\${OPENCLAW_GATEWAY_BIND}#${OPENCLAW_GATEWAY_BIND:-loopback}#g" \
       -e "s#\${TELEGRAM_BOT_TOKEN}#${TELEGRAM_BOT_TOKEN:-}#g" \
+      -e "s#\"\${MODEL_PROVIDERS}\"#${MODEL_PROVIDERS}#g" \
       openclaw.template.json > openclaw.json
     echo "   ✅ Created openclaw.json from template (env values substituted)"
     if [ -z "${PRIMARY_MODEL:-}" ]; then

@@ -130,43 +130,45 @@ openclaw skills install <skill-name>
 ### 5. Using Ollama Cloud (or another custom provider)
 Mainstream providers (`openai/...`, `anthropic/...`, `google/...`,
 `openrouter/...`, `xai/...`) work out of the box — just set `PRIMARY_MODEL`
-and the matching API key. A custom or self-hosted-style provider like Ollama
-Cloud needs an explicit entry under `models.providers` in `openclaw.json`;
-the bundled `ollama` plugin being enabled only auto-discovers a **local**
-Ollama daemon, not the cloud API.
+and the matching API key in `.env`.
 
-Add this to `openclaw.json` (merge it into the existing `"models"` key —
-don't duplicate the key) and set `PRIMARY_MODEL="ollama/<model>:cloud"` and
-`OLLAMA_API_KEY` in `.env`:
+**Ollama Cloud is handled automatically too**: set both of these in `.env`
+before first boot and the setup scripts inject the required
+`models.providers.ollama` entry into `openclaw.json` for you:
 
-```json
-"models": {
-  "mode": "merge",
-  "providers": {
-    "ollama": {
-      "baseUrl": "https://ollama.com",
-      "apiKey": "OLLAMA_API_KEY",
-      "api": "ollama",
-      "models": [
-        {
-          "id": "kimi-k2.6:cloud",
-          "name": "kimi-k2.6:cloud",
-          "reasoning": false,
-          "input": ["text", "image"],
-          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
-          "contextWindow": 128000,
-          "maxTokens": 8192
-        }
-      ]
-    }
-  }
-}
+```bash
+PRIMARY_MODEL="ollama/kimi-k2.6:cloud"   # any https://ollama.com/library model with a :cloud tag
+OLLAMA_API_KEY="your-ollama-key"
 ```
 
-Note `"apiKey": "OLLAMA_API_KEY"` is the **name** of the env var, not the key
-value itself and not wrapped in `${}` — OpenClaw reads it from the process
-environment at runtime. Swap the `id`/`name` for whichever [Ollama Cloud
-model](https://ollama.com/library) you want to use.
+(This is needed because the bundled `ollama` plugin only auto-discovers a
+**local** Ollama daemon — a cloud model ref requires an explicit provider
+entry with `baseUrl: https://ollama.com`. The generated entry's `apiKey`
+field holds the **name** of the env var, not the key itself; OpenClaw reads
+the value from the environment at runtime.)
+
+For any other custom/OpenAI-compatible provider, add an entry under
+`models.providers` in `openclaw.json` by hand after first boot — see the
+[OpenClaw model providers docs](https://docs.openclaw.ai/concepts/model-providers).
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---------|-----|
+| Crash loop, `agents.defaults: Invalid input` | `PRIMARY_MODEL` was empty or unresolvable at first boot. Fix `.env`, then `./deploy.sh --reset` |
+| Dashboard says "gateway token mismatch" | `.env` token drifted from the one baked into `openclaw.json` at first boot — use the token from `openclaw.json` (`sudo grep -A3 '"auth"' openclaw.json`), or `./deploy.sh --reset` to re-render |
+| Changed `.env` but nothing happened | `openclaw.json` renders **once**; edit it directly or `./deploy.sh --reset`. Also use `docker compose up -d` (not `restart`) — `restart` doesn't reload `.env` |
+| "no configuration file provided: not found" | You're not in the repo directory — `cd` back to it |
+| "no such service" | The compose service is named `openclaw` (e.g. `docker compose logs openclaw`); `openclaw-business-assistant` is only the container name |
+| Orphan container warnings | `docker compose down --remove-orphans` |
+| Interactive config wizard / repair | `docker compose run --rm openclaw openclaw configure` or `... openclaw doctor --fix` (the entrypoint runs `openclaw config validate` on every boot and prints the real error at the top of the log) |
+
+**Start over cleanly** (keeps your `.env` API keys, wipes generated config +
+all agent state/memory/logs):
+
+```bash
+./deploy.sh --reset
+```
 
 ## Included Skills
 

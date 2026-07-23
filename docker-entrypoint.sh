@@ -31,14 +31,28 @@ export OPENCLAW_GATEWAY_BIND="${OPENCLAW_GATEWAY_BIND:-lan}"
 export PRIMARY_MODEL="${PRIMARY_MODEL:-}"
 export TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}"
 
+# ── Model provider registration ──
+# Mainstream providers (openai/anthropic/google/openrouter/xai) are
+# picked up from their API-key env vars automatically. Ollama CLOUD is
+# not: the bundled ollama plugin only auto-discovers a LOCAL daemon, so
+# a cloud model ref needs an explicit models.providers.ollama entry.
+# Build it here so PRIMARY_MODEL="ollama/<model>:cloud" + OLLAMA_API_KEY
+# in .env is all a client install needs.
+MODEL_PROVIDERS='{}'
+if [[ "${PRIMARY_MODEL}" == ollama/* ]] && [ -n "${OLLAMA_API_KEY:-}" ]; then
+  OLLAMA_MODEL_ID="${PRIMARY_MODEL#ollama/}"
+  MODEL_PROVIDERS='{"ollama":{"baseUrl":"https://ollama.com","apiKey":"OLLAMA_API_KEY","api":"ollama","models":[{"id":"'"${OLLAMA_MODEL_ID}"'","name":"'"${OLLAMA_MODEL_ID}"'","reasoning":false,"input":["text","image"],"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0},"contextWindow":128000,"maxTokens":8192}]}}'
+  echo "[entrypoint] Registered Ollama Cloud provider for ${PRIMARY_MODEL}"
+fi
+
 # ── Config file ──
 # OpenClaw does NOT substitute ${VAR} placeholders in openclaw.json
 # itself for structural fields (gateway.bind, model.primary, etc — it
 # treats them as literal strings and rejects them against the field's
 # schema). So this renders the template with real values substituted
 # BEFORE OpenClaw ever reads the file. Only happens once, on first
-# boot — after that, openclaw.json is yours, hand-edit it freely (e.g.
-# to add a custom models.providers entry) and it won't be overwritten.
+# boot — after that, openclaw.json is yours, hand-edit it freely and
+# it won't be overwritten. Delete it and restart to regenerate.
 if [ ! -f openclaw.json ]; then
   if [ -f openclaw.template.json ]; then
     sed \
@@ -47,6 +61,7 @@ if [ ! -f openclaw.json ]; then
       -e "s#\${OPENCLAW_GATEWAY_TOKEN}#${OPENCLAW_GATEWAY_TOKEN}#g" \
       -e "s#\${OPENCLAW_GATEWAY_BIND}#${OPENCLAW_GATEWAY_BIND}#g" \
       -e "s#\${TELEGRAM_BOT_TOKEN}#${TELEGRAM_BOT_TOKEN}#g" \
+      -e "s#\"\${MODEL_PROVIDERS}\"#${MODEL_PROVIDERS}#g" \
       openclaw.template.json > openclaw.json
     echo "[entrypoint] Created openclaw.json from template (env values substituted)"
     if [ -z "${PRIMARY_MODEL}" ]; then
@@ -59,11 +74,31 @@ if [ ! -f openclaw.json ]; then
   fi
 fi
 
+# ── Token drift check ──
+# openclaw.json is rendered once; if the token in .env changes later
+# the two silently disagree and the dashboard rejects you. Warn early.
+if ! grep -q "\"token\": \"${OPENCLAW_GATEWAY_TOKEN}\"" openclaw.json; then
+  echo "[entrypoint] WARNING: OPENCLAW_GATEWAY_TOKEN in .env does not match the token in openclaw.json." >&2
+  echo "[entrypoint]          The dashboard will reject the .env token. Use the token from openclaw.json," >&2
+  echo "[entrypoint]          or delete openclaw.json and restart to regenerate it from .env." >&2
+fi
+
 # ── Runtime directories ──
 mkdir -p \
   workspace-business-assistant/memory \
   agents/business-assistant/agent \
   agents/business-assistant/sessions
+
+# ── Preflight ──
+# Validate before starting so a bad config fails ONCE with the real
+# error at the top of the log, instead of a 2-second crash loop that
+# trips OpenClaw's restart breaker and buries the cause. Start anyway:
+# some validate complaints are warnings the gateway tolerates.
+if ! openclaw config validate; then
+  echo "[entrypoint] Config validation failed (see above). Retrying start in 15s —" >&2
+  echo "[entrypoint] fix openclaw.json, or delete it and restart to regenerate from .env." >&2
+  sleep 15
+fi
 
 echo "[entrypoint] Starting: $*"
 exec "$@"

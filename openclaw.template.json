@@ -87,9 +87,10 @@
   },
   "models": {
     "mode": "merge",
-    "providers": {}
+    "providers": "${MODEL_PROVIDERS}"
   },
   "plugins": {
+    "bundledDiscovery": "compat",
     "entries": {
       "browser": { "enabled": false },
       "memory-core": { "config": {} },
