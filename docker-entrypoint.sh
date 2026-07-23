@@ -39,9 +39,11 @@ export TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}"
 # Build it here so PRIMARY_MODEL="ollama/<model>:cloud" + OLLAMA_API_KEY
 # in .env is all a client install needs.
 MODEL_PROVIDERS='{}'
+AUTH_PROFILES='{}'
 if [[ "${PRIMARY_MODEL}" == ollama/* ]] && [ -n "${OLLAMA_API_KEY:-}" ]; then
   OLLAMA_MODEL_ID="${PRIMARY_MODEL#ollama/}"
-  MODEL_PROVIDERS='{"ollama":{"baseUrl":"https://ollama.com","apiKey":"OLLAMA_API_KEY","api":"ollama","models":[{"id":"'"${OLLAMA_MODEL_ID}"'","name":"'"${OLLAMA_MODEL_ID}"'","reasoning":false,"input":["text","image"],"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0},"contextWindow":128000,"maxTokens":8192}]}}'
+  MODEL_PROVIDERS='{"ollama":{"baseUrl":"https://ollama.com","apiKey":"OLLAMA_API_KEY","api":"ollama","models":[{"id":"'"${OLLAMA_MODEL_ID}"'","name":"'"${OLLAMA_MODEL_ID}"'","reasoning":false,"input":["text","image"],"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0},"contextWindow":128000,"maxTokens":8192,"params":{"num_ctx":128000}}]}}'
+  AUTH_PROFILES='{"ollama-cloud:default":{"provider":"ollama-cloud","mode":"api_key"}}'
   echo "[entrypoint] Registered Ollama Cloud provider for ${PRIMARY_MODEL}"
 fi
 
@@ -62,6 +64,7 @@ if [ ! -f openclaw.json ]; then
       -e "s#\${OPENCLAW_GATEWAY_BIND}#${OPENCLAW_GATEWAY_BIND}#g" \
       -e "s#\${TELEGRAM_BOT_TOKEN}#${TELEGRAM_BOT_TOKEN}#g" \
       -e "s#\"\${MODEL_PROVIDERS}\"#${MODEL_PROVIDERS}#g" \
+      -e "s#\"\${AUTH_PROFILES}\"#${AUTH_PROFILES}#g" \
       openclaw.template.json > openclaw.json
     echo "[entrypoint] Created openclaw.json from template (env values substituted)"
     if [ -z "${PRIMARY_MODEL}" ]; then

@@ -155,7 +155,7 @@ For any other custom/OpenAI-compatible provider, add an entry under
 
 | Symptom | Fix |
 |---------|-----|
-| Crash loop, `agents.defaults: Invalid input` | `PRIMARY_MODEL` was empty or unresolvable at first boot. Fix `.env`, then `./deploy.sh --reset` |
+| Crash loop, `agents.defaults: Invalid input` | Empty `PRIMARY_MODEL` at first boot, or a legacy/unknown key in `agents.defaults` (e.g. `modelPolicy`, removed from this template) — fix `.env`/`openclaw.json`, or `./deploy.sh --reset` |
 | Dashboard says "gateway token mismatch" | `.env` token drifted from the one baked into `openclaw.json` at first boot — use the token from `openclaw.json` (`sudo grep -A3 '"auth"' openclaw.json`), or `./deploy.sh --reset` to re-render |
 | Changed `.env` but nothing happened | `openclaw.json` renders **once**; edit it directly or `./deploy.sh --reset`. Also use `docker compose up -d` (not `restart`) — `restart` doesn't reload `.env` |
 | "no configuration file provided: not found" | You're not in the repo directory — `cd` back to it |
