@@ -23,9 +23,9 @@ cd openclaw-business-assistant
 # 2. Deploy (creates .env, generates a gateway token, builds & starts)
 ./deploy.sh
 
-# 3. Add API keys, then restart
+# 3. Add API keys, then apply them
 nano .env
-docker compose restart
+docker compose up -d
 ```
 
 That's it. The repo is mounted into the container as `~/.openclaw`, so config,
@@ -42,7 +42,7 @@ Useful commands:
 |---------|-------------|
 | `docker compose logs -f` | Tail the gateway logs |
 | `docker compose ps` | Container status + health |
-| `docker compose restart` | Restart after editing `.env` |
+| `docker compose up -d` | Apply changes after editing `.env` (recreates the container so it picks up new values — plain `restart` does NOT reload `.env`) |
 | `docker compose down` | Stop (state is preserved on disk) |
 
 **Control UI on a VPS:** the gateway port is published on the VPS's loopback
@@ -167,7 +167,7 @@ repo (mounted as ~/.openclaw in Docker, or cloned there directly)
 1. **Before the meeting** — VPS provisioned, Docker installed (`curl -fsSL https://get.docker.com | sh`)
 2. `git clone` + `./deploy.sh` (~3 min)
 3. Add the client's model provider key + `PRIMARY_MODEL` to `.env` (~2 min)
-4. Create their Telegram bot via @BotFather, add the token, `docker compose restart` (~5 min)
+4. Create their Telegram bot via @BotFather, add the token, `docker compose up -d` (~5 min)
 5. Client messages the bot and pairs; verify replies come through (~5 min)
 6. Personalize `USER.md` and `SOUL.md` with the client's details and brand voice (~10 min)
 7. (Optional follow-up) Google Workspace OAuth for Gmail/Calendar

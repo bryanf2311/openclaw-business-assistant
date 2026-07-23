@@ -10,9 +10,12 @@ services:
     env_file:
       - .env
     environment:
-      # Inside the container the gateway binds to the container network;
-      # the `ports` mapping below controls what's actually exposed.
-      OPENCLAW_GATEWAY_BIND: ${OPENCLAW_GATEWAY_BIND:-lan}
+      # Always "lan" for Docker, regardless of what .env says — a process
+      # bound to loopback inside the container's network namespace is not
+      # reachable through the `ports` mapping below. This is intentionally
+      # NOT ${OPENCLAW_GATEWAY_BIND} — .env's value (used by the bare-metal
+      # path) must never leak in here and break the Docker deploy.
+      OPENCLAW_GATEWAY_BIND: lan
     volumes:
       # The whole repo becomes ~/.openclaw inside the container.
       # Config, skills, workspace, memory, and agent state all persist
