@@ -1,0 +1,8 @@
+# The image only needs the entrypoint script copied in at build time —
+# everything else (config, skills, workspace, agent state, logs) is
+# bind-mounted at runtime, not baked into the image. Excluding it all
+# from the build context also avoids Docker choking on root-owned
+# runtime directories (logs/, state/, credentials/, etc.) that the
+# container creates on previous runs.
+**
+!docker-entrypoint.sh
