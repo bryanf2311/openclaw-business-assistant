@@ -29,22 +29,6 @@ if ! command -v openclaw &>/dev/null; then
 fi
 echo "   ✅ OpenClaw $(openclaw --version 2>/dev/null || echo 'installed')"
 
-# ── Set up config ──
-echo ""
-echo "📋 Setting up configuration..."
-
-if [ ! -f openclaw.json ]; then
-  if [ -f openclaw.template.json ]; then
-    cp openclaw.template.json openclaw.json
-    echo "   ✅ Created openclaw.json from template"
-  else
-    echo "   ❌ openclaw.template.json not found!"
-    exit 1
-  fi
-else
-  echo "   ⏭️  openclaw.json already exists, skipping"
-fi
-
 # ── Set up .env ──
 echo ""
 echo "🔑 Checking environment variables..."
@@ -76,6 +60,40 @@ if [ -f .env ] && ! grep -q '^OPENCLAW_GATEWAY_TOKEN="..*"' .env; then
     printf '\nOPENCLAW_GATEWAY_TOKEN="%s"\n' "${TOKEN}" >> .env
   fi
   echo "   ✅ Generated gateway token"
+fi
+
+# ── Set up config ──
+echo ""
+echo "📋 Setting up configuration..."
+
+if [ ! -f openclaw.json ]; then
+  if [ -f openclaw.template.json ]; then
+    # OpenClaw does NOT substitute ${VAR} placeholders in openclaw.json
+    # itself for structural fields (gateway.bind, model.primary) — it
+    # treats them as literal strings and rejects them. Render the
+    # template with real values from .env substituted in directly.
+    set -a
+    # shellcheck disable=SC1091
+    source .env
+    set +a
+    export HOME="${HOME}"
+    sed \
+      -e "s#\${HOME}#${HOME}#g" \
+      -e "s#\${PRIMARY_MODEL}#${PRIMARY_MODEL:-}#g" \
+      -e "s#\${OPENCLAW_GATEWAY_TOKEN}#${OPENCLAW_GATEWAY_TOKEN:-}#g" \
+      -e "s#\${OPENCLAW_GATEWAY_BIND}#${OPENCLAW_GATEWAY_BIND:-loopback}#g" \
+      -e "s#\${TELEGRAM_BOT_TOKEN}#${TELEGRAM_BOT_TOKEN:-}#g" \
+      openclaw.template.json > openclaw.json
+    echo "   ✅ Created openclaw.json from template (env values substituted)"
+    if [ -z "${PRIMARY_MODEL:-}" ]; then
+      echo "   ⚠️  PRIMARY_MODEL is empty in .env — set it, delete openclaw.json, and re-run this script."
+    fi
+  else
+    echo "   ❌ openclaw.template.json not found!"
+    exit 1
+  fi
+else
+  echo "   ⏭️  openclaw.json already exists, skipping"
 fi
 
 # ── Create workspace directories ──

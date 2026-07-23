@@ -98,6 +98,15 @@ Copy `.env.example` to `.env` and fill in your values:
 | `GOOGLE_ACCESS_TOKEN` | No | Google OAuth access token |
 | `GOOGLE_REFRESH_TOKEN` | No | Google OAuth refresh token |
 
+**Important:** these values get baked into `openclaw.json` **once**, the first
+time the gateway boots (OpenClaw doesn't substitute `${VAR}` placeholders in
+its config file itself for fields like `model.primary` or `gateway.bind` — our
+`deploy.sh`/`docker-entrypoint.sh`/`setup.sh` do that substitution before
+OpenClaw ever reads it). After that first boot, `openclaw.json` is a real file
+you own — editing `.env` again and restarting will **not** pick up the change.
+To change `PRIMARY_MODEL` or similar later, either edit `openclaw.json`
+directly, or delete it and restart to regenerate from `.env`.
+
 ## Customizing for Your Client
 
 ### 1. Brand the Assistant
@@ -117,6 +126,47 @@ Skills live in `~/.openclaw/skills/`. Install more from ClawHub:
 ```bash
 openclaw skills install <skill-name>
 ```
+
+### 5. Using Ollama Cloud (or another custom provider)
+Mainstream providers (`openai/...`, `anthropic/...`, `google/...`,
+`openrouter/...`, `xai/...`) work out of the box — just set `PRIMARY_MODEL`
+and the matching API key. A custom or self-hosted-style provider like Ollama
+Cloud needs an explicit entry under `models.providers` in `openclaw.json`;
+the bundled `ollama` plugin being enabled only auto-discovers a **local**
+Ollama daemon, not the cloud API.
+
+Add this to `openclaw.json` (merge it into the existing `"models"` key —
+don't duplicate the key) and set `PRIMARY_MODEL="ollama/<model>:cloud"` and
+`OLLAMA_API_KEY` in `.env`:
+
+```json
+"models": {
+  "mode": "merge",
+  "providers": {
+    "ollama": {
+      "baseUrl": "https://ollama.com",
+      "apiKey": "OLLAMA_API_KEY",
+      "api": "ollama",
+      "models": [
+        {
+          "id": "kimi-k2.6:cloud",
+          "name": "kimi-k2.6:cloud",
+          "reasoning": false,
+          "input": ["text", "image"],
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+          "contextWindow": 128000,
+          "maxTokens": 8192
+        }
+      ]
+    }
+  }
+}
+```
+
+Note `"apiKey": "OLLAMA_API_KEY"` is the **name** of the env var, not the key
+value itself and not wrapped in `${}` — OpenClaw reads it from the process
+environment at runtime. Swap the `id`/`name` for whichever [Ollama Cloud
+model](https://ollama.com/library) you want to use.
 
 ## Included Skills
 
@@ -145,7 +195,7 @@ openclaw skills install <skill-name>
 
 ```
 repo (mounted as ~/.openclaw in Docker, or cloned there directly)
-├── openclaw.json          # Gateway configuration (env var references)
+├── openclaw.json          # Gateway configuration (rendered from the template once on first boot)
 ├── .env                   # Your secrets (gitignored)
 ├── Dockerfile             # Node 22 + OpenClaw image
 ├── docker-compose.yml     # Mounts the repo, publishes port on host loopback
