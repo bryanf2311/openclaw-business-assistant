@@ -56,6 +56,16 @@ fi
 # boot — after that, openclaw.json is yours, hand-edit it freely and
 # it won't be overwritten. Delete it and restart to regenerate.
 if [ ! -f openclaw.json ]; then
+  if [ -z "${PRIMARY_MODEL}" ]; then
+    echo "[entrypoint] ─────────────────────────────────────────────────────"
+    echo "[entrypoint] Waiting for configuration."
+    echo "[entrypoint] Set PRIMARY_MODEL (and its API key) in .env, then run:"
+    echo "[entrypoint]     docker compose up -d"
+    echo "[entrypoint] Checking again in 5 minutes."
+    echo "[entrypoint] ─────────────────────────────────────────────────────"
+    sleep 300
+    exit 0
+  fi
   if [ -f openclaw.template.json ]; then
     sed \
       -e "s#\${HOME}#${HOME}#g" \
@@ -67,9 +77,6 @@ if [ ! -f openclaw.json ]; then
       -e "s#\"\${AUTH_PROFILES}\"#${AUTH_PROFILES}#g" \
       openclaw.template.json > openclaw.json
     echo "[entrypoint] Created openclaw.json from template (env values substituted)"
-    if [ -z "${PRIMARY_MODEL}" ]; then
-      echo "[entrypoint] WARNING: PRIMARY_MODEL is empty — set it in .env, delete openclaw.json, and restart to regenerate." >&2
-    fi
   else
     echo "[entrypoint] ERROR: no openclaw.json and no openclaw.template.json found." >&2
     echo "[entrypoint] Did you mount the repo at /root/.openclaw? (see docker-compose.yml)" >&2

@@ -67,7 +67,12 @@ echo ""
 echo "📋 Setting up configuration..."
 
 if [ ! -f openclaw.json ]; then
-  if [ -f openclaw.template.json ]; then
+  # shellcheck disable=SC1091
+  PRIMARY_MODEL_CHECK="$(grep -E '^PRIMARY_MODEL="..*"' .env 2>/dev/null || true)"
+  if [ -z "${PRIMARY_MODEL_CHECK}" ]; then
+    echo "   ⚠️  PRIMARY_MODEL is not set in .env yet — skipping config generation."
+    echo "   📝 Edit .env (set PRIMARY_MODEL and its API key), then re-run: bash setup.sh"
+  elif [ -f openclaw.template.json ]; then
     # OpenClaw does NOT substitute ${VAR} placeholders in openclaw.json
     # itself for structural fields (gateway.bind, model.primary) — it
     # treats them as literal strings and rejects them. Render the
@@ -99,9 +104,6 @@ if [ ! -f openclaw.json ]; then
       -e "s#\"\${AUTH_PROFILES}\"#${AUTH_PROFILES}#g" \
       openclaw.template.json > openclaw.json
     echo "   ✅ Created openclaw.json from template (env values substituted)"
-    if [ -z "${PRIMARY_MODEL:-}" ]; then
-      echo "   ⚠️  PRIMARY_MODEL is empty in .env — set it, delete openclaw.json, and re-run this script."
-    fi
   else
     echo "   ❌ openclaw.template.json not found!"
     exit 1
