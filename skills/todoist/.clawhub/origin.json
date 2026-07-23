@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "todoist",
+  "ownerHandle": "mjrussell",
+  "installedVersion": "0.2.1",
+  "installedAt": 1784609226708,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "ff3e7fdf083bc4baaaba1ff1eae159418f1d10763d5e8f8db48e9861c47f931c",
+    "integrity": "sha256-/z5/3wg7xLqquh/x6uFZQY8dEHY9Xo+NtI6YYcR/kxw="
+  },
+  "skillFile": {
+    "path": "SKILL.md",
+    "sha256": "56960995964fa8cf3110194b53dfbba90283a402585f89325414d2dfa72eb731"
+  }
+}

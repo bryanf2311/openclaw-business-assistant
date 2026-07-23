@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "airtable-records",
+  "ownerHandle": "hith3sh",
+  "installedVersion": "1.0.5",
+  "installedAt": 1784604362645,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "cb541b280c38d170c2536b11427771241e9400071ec6e3a463665b4e698f2aeb",
+    "integrity": "sha256-y1QbKAw40XDCU2sRQndxJB6UAAcexuOkY2ZbTmmPKus="
+  },
+  "skillFile": {
+    "path": "SKILL.md",
+    "sha256": "f1ecf22c4c193e8ca94a62d70bd06e4bfad304885c8f5b0d1bf87aef2647d8b2"
+  }
+}

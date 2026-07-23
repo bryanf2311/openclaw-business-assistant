@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "proactive-agent",
+  "ownerHandle": "halthelobster",
+  "installedVersion": "3.1.0",
+  "installedAt": 1784604424930,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "6e0f4daed2d0a8583fc9edb3cfaa0bb63a1331ef89d6a0d97de9f50d6b01f0ee",
+    "integrity": "sha256-bg9NrtLQqFg/ye2zz6oLtjoTMe+J1qDZfen1DWsB8O4="
+  },
+  "skillFile": {
+    "path": "SKILL.md",
+    "sha256": "571521d9f6f38b3ec9f073d7bdec47170a35e9c78556954ac7f0f860ab12873b"
+  }
+}

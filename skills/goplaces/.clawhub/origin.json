@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "goplaces",
+  "ownerHandle": "steipete",
+  "installedVersion": "1.0.0",
+  "installedAt": 1784604599445,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "7bfc5927f95ab2cdc1d4a11a836a4bb24c8a00354cb613cd98c6057b38c969ff",
+    "integrity": "sha256-e/xZJ/lass3B1KEag2pLskyKADVMthPNmMYFezjJaf8="
+  },
+  "skillFile": {
+    "path": "SKILL.md",
+    "sha256": "65cc8f6cc76ab9b939e52c724d4cb1f7b2424c55444be599931e718e7f9bfee9"
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "agents": {
+    "defaults": {
+      "workspace": "${HOME}/.openclaw/workspace",
+      "model": {
+        "primary": "${PRIMARY_MODEL:-ollama-cloud/deepseek-v4-flash}",
+        "fallbacks": [
+          "ollama-cloud/kimi-k2.5:cloud",
+          "ollama/llama3.2:3b",
+          "ollama/qwen2.5:7b-instruct-q4_K_M"
+        ]
+      },
+      "modelPolicy": {
+        "allow": [
+          "ollama-cloud/deepseek-v4-flash",
+          "ollama-cloud/kimi-k2.5:cloud",
+          "ollama-cloud/gpt-oss:20b",
+          "ollama/llama3.2:3b",
+          "ollama/qwen3.6",
+          "ollama/qwen2.5:7b-instruct-q4_K_M"
+        ]
+      }
+    },
+    "list": [
+      {
+        "id": "business-assistant",
+        "name": "Business Assistant",
+        "model": "${PRIMARY_MODEL:-ollama-cloud/deepseek-v4-flash}",
+        "agentDir": "${HOME}/.openclaw/agents/business-assistant/agent",
+        "workspace": "${HOME}/.openclaw/workspace-business-assistant"
+      }
+    ]
+  },
+  "gateway": {
+    "mode": "local",
+    "auth": {
+      "mode": "token",
+      "token": "${OPENCLAW_GATEWAY_TOKEN}"
+    },
+    "port": 18789,
+    "bind": "loopback",
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "controlUi": {
+      "allowInsecureAuth": true,
+      "allowedOrigins": [
+        "http://127.0.0.1:18789",
+        "http://localhost:18789"
+      ]
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "computer.act",
+        "contacts.add",
+        "calendar.add",
+        "reminders.add",
+        "sms.send",
+        "sms.search",
+        "health.summary"
+      ]
+    }
+  },
+  "auth": {
+    "profiles": {
+      "ollama-cloud:default": {
+        "provider": "ollama-cloud",
+        "mode": "api_key"
+      },
+      "ollama:default": {
+        "mode": "api_key",
+        "provider": "ollama"
+      }
+    }
+  },
+  "channels": {
+    "telegram": {
+      "enabled": true,
+      "accounts": {
+        "business-assistant": {
+          "name": "Business Assistant",
+          "enabled": true,
+          "botToken": "${TELEGRAM_BOT_TOKEN}"
+        }
+      },
+      "dmPolicy": "pairing",
+      "streaming": {
+        "mode": "off"
+      }
+    }
+  },
+  "mcp": {
+    "servers": {
+      "google-workspace-mcp": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@presto-ai/google-workspace-mcp"
+        ],
+        "enabled": true
+      }
+    }
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "ollama-cloud": {
+        "api": "openai-completions",
+        "apiKey": "${OLLAMA_CLOUD_API_KEY}",
+        "baseUrl": "https://ollama.com/v1",
+        "models": [
+          { "id": "deepseek-v4-flash", "name": "DeepSeek V4 Flash" },
+          { "id": "deepseek-v4-pro", "name": "DeepSeek V4 Pro" },
+          { "id": "kimi-k2.5:cloud", "name": "Kimi K2.5 (Cloud)" }
+        ]
+      }
+    }
+  },
+  "plugins": {
+    "entries": {
+      "browser": { "enabled": false },
+      "memory-core": { "config": {} },
+      "ollama": { "enabled": true },
+      "telegram": { "enabled": true },
+      "duckduckgo": { "enabled": true }
+    },
+    "allow": [
+      "ollama",
+      "duckduckgo",
+      "browser",
+      "memory-core",
+      "telegram"
+    ]
+  },
+  "tools": {
+    "agentToAgent": { "enabled": true },
+    "profile": "coding",
+    "web": {
+      "search": { "enabled": true, "provider": "duckduckgo" },
+      "fetch": { "enabled": true }
+    }
+  },
+  "hooks": {
+    "enabled": false
+  },
+  "skills": {
+    "install": {
+      "nodeManager": "npm"
+    }
+  },
+  "session": {
+    "reset": {
+      "mode": "idle",
+      "idleMinutes": 30
+    },
+    "resetByChannel": {
+      "telegram": {
+        "mode": "idle",
+        "idleMinutes": 30
+      }
+    },
+    "resetByType": {
+      "direct": {
+        "mode": "idle",
+        "idleMinutes": 30
+      },
+      "group": {
+        "mode": "idle",
+        "idleMinutes": 15
+      }
+    }
+  }
+}

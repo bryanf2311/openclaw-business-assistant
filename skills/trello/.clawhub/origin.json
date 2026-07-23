@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "trello",
+  "ownerHandle": "steipete",
+  "installedVersion": "1.0.0",
+  "installedAt": 1784609600745,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "991d51618728f0f837bbb6261c9e968c69f227dfd43595d007877f58434cdcee",
+    "integrity": "sha256-mR1RYYco8Pg3u7YmHJ6WjGnyJ9/UNZXQB4d/WENM3O4="
+  },
+  "skillFile": {
+    "path": "SKILL.md",
+    "sha256": "ede0f3181af05734e178a9415295402ecfe4cb2da08d1d26515634e874ec08e1"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "netlify",
+  "ownerHandle": "ajmwagar",
+  "installedVersion": "1.0.0",
+  "installedAt": 1784604648118,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "14232aca914174b15d5ae3caa215d92298fcf729fc7b1a18395b534d4f3e72e3",
+    "integrity": "sha256-FCMqypFBdLFdWuPKohXZIpj89yn8exoYOVtTTU8+cuM="
+  },
+  "skillFile": {
+    "path": "SKILL.md",
+    "sha256": "dc423648d85cee1a6477b50f99bf65be1ef1095998a288b6fb24015e0cedcd9c"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "nano-banana-pro",
+  "ownerHandle": "steipete",
+  "installedVersion": "1.0.1",
+  "installedAt": 1784604561084,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "9d1a2f5f97d821b0e9b74a91e02c8854896d575ea20cc4ed856d2390dc0ba55e",
+    "integrity": "sha256-nRovX5fYIbDpt0qR4CyIVIltV16iDMTthW0jkNwLpV4="
+  },
+  "skillFile": {
+    "path": "SKILL.md",
+    "sha256": "4ea88f4b0e9577e22fb68111fb2efcacb3f5c034dee3f8f6f8aeabaa96a7988b"
+  }
+}

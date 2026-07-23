@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "calendar-cli",
+  "ownerHandle": "porteden",
+  "installedVersion": "1.0.2",
+  "installedAt": 1784609981251,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "cc1c2ff170c5ad519db31aedbe989ba21852b71fdf6e9e386490ca5ea7914519",
+    "integrity": "sha256-zBwv8XDFrVGdsxrtvpibohhStx/fbp44ZJDKXqeRRRk="
+  },
+  "skillFile": {
+    "path": "SKILL.md",
+    "sha256": "e8fa86db01cc0d7de485d9e2bcd44de2853923e09670f9ea06972bd8bae98c8a"
+  }
+}

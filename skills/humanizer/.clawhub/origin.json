@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "humanizer",
+  "ownerHandle": "biostartechnology",
+  "installedVersion": "1.0.0",
+  "installedAt": 1784604512105,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "273fcc8509470f4771f9ba578f031956f5802a949c108c773dea88da833c1016",
+    "integrity": "sha256-Jz/MhQlHD0dx+bpXjwMZVvWAKpScEIx3PeqI2oM8EBY="
+  },
+  "skillFile": {
+    "path": "SKILL.md",
+    "sha256": "d7ce483d368e430185b707611ce82ef4206021da28cf306d75d4b64f1167416f"
+  }
+}

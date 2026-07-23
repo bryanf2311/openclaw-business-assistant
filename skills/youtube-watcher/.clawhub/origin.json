@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "registry": "https://clawhub.ai",
+  "slug": "youtube-watcher",
+  "ownerHandle": "michaelgathara",
+  "installedVersion": "1.0.0",
+  "installedAt": 1784604628726,
+  "artifact": {
+    "kind": "archive",
+    "sha256": "06ee448e3da2121c7bebcb330e8693c6e71a71d52060b13e5e647264b56851cc",
+    "integrity": "sha256-Bu5Ejj2iEhx768szDoaTxucacdUgYLE+XmRyZLVoUcw="
+  },
+  "skillFile": {
+    "path": "SKILL.md",
+    "sha256": "89b97c95ce71f719f2d97e4cb7657217f4a85afbb66ee5e9dbafa39b71bcdb39"
+  }
+}
