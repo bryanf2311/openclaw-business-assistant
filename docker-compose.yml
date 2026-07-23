@@ -4,8 +4,11 @@ services:
       context: .
       args:
         OPENCLAW_VERSION: ${OPENCLAW_VERSION:-latest}
-    image: openclaw-business-assistant
-    container_name: openclaw-business-assistant
+    # No fixed image/container_name here on purpose: Compose derives both
+    # from the project directory name automatically, so cloning this repo
+    # into a second directory (e.g. for another client on the same host)
+    # just works — distinct image, distinct container, no collision. Set
+    # OPENCLAW_PORT in that second .env to avoid a port clash too.
     restart: unless-stopped
     env_file:
       - .env

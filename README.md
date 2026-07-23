@@ -159,7 +159,7 @@ For any other custom/OpenAI-compatible provider, add an entry under
 | Dashboard says "gateway token mismatch" | `.env` token drifted from the one baked into `openclaw.json` at first boot — use the token from `openclaw.json` (`sudo grep -A3 '"auth"' openclaw.json`), or `./deploy.sh --reset` to re-render |
 | Changed `.env` but nothing happened | `openclaw.json` renders **once**; edit it directly or `./deploy.sh --reset`. Also use `docker compose up -d` (not `restart`) — `restart` doesn't reload `.env` |
 | "no configuration file provided: not found" | You're not in the repo directory — `cd` back to it |
-| "no such service" | The compose service is named `openclaw` (e.g. `docker compose logs openclaw`); `openclaw-business-assistant` is only the container name |
+| "no such service" | The compose service is named `openclaw` (e.g. `docker compose logs openclaw`) — the container name varies by directory (see below) |
 | Orphan container warnings | `docker compose down --remove-orphans` |
 | Interactive config wizard / repair | `docker compose run --rm openclaw openclaw configure` or `... openclaw doctor --fix` (the entrypoint runs `openclaw config validate` on every boot and prints the real error at the top of the log) |
 
@@ -169,6 +169,31 @@ all agent state/memory/logs):
 ```bash
 ./deploy.sh --reset
 ```
+
+## Running Multiple Instances on One Machine
+
+Each client is a separate clone in a separate directory — Docker Compose
+derives the image name and container name from the directory name
+automatically, so this just works with no manual renaming:
+
+```bash
+git clone https://github.com/bryanf2311/openclaw-business-assistant.git client-acme
+cd client-acme
+cp .env.example .env
+nano .env    # set a DIFFERENT OPENCLAW_PORT (e.g. 18790), plus this client's keys
+./deploy.sh
+```
+
+Each instance is fully independent: its own container, its own image, its
+own `openclaw.json`/skills/workspace/memory (all inside its own directory),
+and its own port. Reach the second one's control UI at
+`http://127.0.0.1:18790` (or whatever port you chose). `docker compose ps`
+run from inside each directory only ever shows that instance's container.
+
+The one thing to actually remember: **give every instance after the first a
+unique `OPENCLAW_PORT`** in its `.env` before running `deploy.sh` — two
+instances both left on the default `18789` will fail to bind the second
+one's port.
 
 ## Included Skills
 
