@@ -18,3 +18,17 @@ media/
 state/
 openclaw.json.*
 openclaw/sessions/
+
+# Runtime dirs OpenClaw may create when this repo is mounted as ~/.openclaw
+credentials/
+cache/
+cron/
+devices/
+identity/
+subagents/
+telegram/
+canvas/
+
+# Client memory is per-install, never committed to the template
+workspace-business-assistant/memory/*
+!workspace-business-assistant/memory/.gitkeep

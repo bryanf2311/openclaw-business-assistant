@@ -27,7 +27,7 @@
       "token": "${OPENCLAW_GATEWAY_TOKEN}"
     },
     "port": 18789,
-    "bind": "loopback",
+    "bind": "${OPENCLAW_GATEWAY_BIND}",
     "tailscale": {
       "mode": "off",
       "resetOnExit": false

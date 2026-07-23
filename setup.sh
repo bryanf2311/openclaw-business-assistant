@@ -61,6 +61,23 @@ else
   echo "   ✅ .env exists"
 fi
 
+# Ensure the bind var exists (added after early versions of this template)
+if [ -f .env ] && ! grep -q '^OPENCLAW_GATEWAY_BIND=' .env; then
+  printf '\nOPENCLAW_GATEWAY_BIND="loopback"\n' >> .env
+  echo "   ✅ Added OPENCLAW_GATEWAY_BIND=loopback to .env"
+fi
+
+# Generate a gateway token if the .env doesn't have one yet
+if [ -f .env ] && ! grep -q '^OPENCLAW_GATEWAY_TOKEN="..*"' .env; then
+  TOKEN="$(openssl rand -hex 20 2>/dev/null || head -c 20 /dev/urandom | od -An -tx1 | tr -d ' \n')"
+  if grep -q '^OPENCLAW_GATEWAY_TOKEN=' .env; then
+    sed -i.bak "s|^OPENCLAW_GATEWAY_TOKEN=.*|OPENCLAW_GATEWAY_TOKEN=\"${TOKEN}\"|" .env && rm -f .env.bak
+  else
+    printf '\nOPENCLAW_GATEWAY_TOKEN="%s"\n' "${TOKEN}" >> .env
+  fi
+  echo "   ✅ Generated gateway token"
+fi
+
 # ── Create workspace directories ──
 echo ""
 echo "📁 Creating workspace directories..."
