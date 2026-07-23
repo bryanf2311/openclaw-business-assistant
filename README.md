@@ -15,7 +15,7 @@ A ready-to-deploy AI personal assistant for business owners. Clone, configure, a
 
 - **Node.js 20+** and npm
 - **OpenClaw** installed: `npm install -g openclaw`
-- **Ollama Cloud** account (or another model provider) — [ollama.com](https://ollama.com)
+- **A model provider** — OpenAI, Anthropic, Google, OpenRouter, or a local Ollama setup
 - **Telegram bot token** (optional, for Telegram access) — talk to [@BotFather](https://t.me/botfather)
 - **Google Cloud project** with Gmail/Calendar API enabled (optional, for Google integration)
 
@@ -47,13 +47,12 @@ Copy `.env.example` to `.env` and fill in your values:
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `OPENCLAW_GATEWAY_TOKEN` | Yes | Auth token for your gateway (generate one: `openssl rand -hex 20`) |
-| `OLLAMA_CLOUD_API_KEY` | Yes | Your Ollama Cloud API key |
+| `PRIMARY_MODEL` | No | Override the default model (e.g. `openai/gpt-4o`) |
 | `TELEGRAM_BOT_TOKEN` | No | Telegram bot token for chat interface |
 | `GOOGLE_CLIENT_ID` | No | Google OAuth client ID |
 | `GOOGLE_CLIENT_SECRET` | No | Google OAuth client secret |
 | `GOOGLE_ACCESS_TOKEN` | No | Google OAuth access token |
 | `GOOGLE_REFRESH_TOKEN` | No | Google OAuth refresh token |
-| `PRIMARY_MODEL` | No | Override the default model (default: `ollama-cloud/deepseek-v4-flash`) |
 
 ## Customizing for Your Client
 

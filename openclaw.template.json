@@ -3,29 +3,18 @@
     "defaults": {
       "workspace": "${HOME}/.openclaw/workspace",
       "model": {
-        "primary": "${PRIMARY_MODEL:-ollama-cloud/deepseek-v4-flash}",
-        "fallbacks": [
-          "ollama-cloud/kimi-k2.5:cloud",
-          "ollama/llama3.2:3b",
-          "ollama/qwen2.5:7b-instruct-q4_K_M"
-        ]
+        "primary": "${PRIMARY_MODEL}",
+        "fallbacks": []
       },
       "modelPolicy": {
-        "allow": [
-          "ollama-cloud/deepseek-v4-flash",
-          "ollama-cloud/kimi-k2.5:cloud",
-          "ollama-cloud/gpt-oss:20b",
-          "ollama/llama3.2:3b",
-          "ollama/qwen3.6",
-          "ollama/qwen2.5:7b-instruct-q4_K_M"
-        ]
+        "allow": []
       }
     },
     "list": [
       {
         "id": "business-assistant",
         "name": "Business Assistant",
-        "model": "${PRIMARY_MODEL:-ollama-cloud/deepseek-v4-flash}",
+        "model": "${PRIMARY_MODEL}",
         "agentDir": "${HOME}/.openclaw/agents/business-assistant/agent",
         "workspace": "${HOME}/.openclaw/workspace-business-assistant"
       }
@@ -66,16 +55,7 @@
     }
   },
   "auth": {
-    "profiles": {
-      "ollama-cloud:default": {
-        "provider": "ollama-cloud",
-        "mode": "api_key"
-      },
-      "ollama:default": {
-        "mode": "api_key",
-        "provider": "ollama"
-      }
-    }
+    "profiles": {}
   },
   "channels": {
     "telegram": {
@@ -107,18 +87,7 @@
   },
   "models": {
     "mode": "merge",
-    "providers": {
-      "ollama-cloud": {
-        "api": "openai-completions",
-        "apiKey": "${OLLAMA_CLOUD_API_KEY}",
-        "baseUrl": "https://ollama.com/v1",
-        "models": [
-          { "id": "deepseek-v4-flash", "name": "DeepSeek V4 Flash" },
-          { "id": "deepseek-v4-pro", "name": "DeepSeek V4 Pro" },
-          { "id": "kimi-k2.5:cloud", "name": "Kimi K2.5 (Cloud)" }
-        ]
-      }
-    }
+    "providers": {}
   },
   "plugins": {
     "entries": {
